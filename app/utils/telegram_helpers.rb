@@ -17,6 +17,13 @@ module TelegramHelpers
                          reply_markup: {hide_keyboard: true})
   end
 
+  def get_link(section_label, index)
+    sections = Section.get(section_label)
+    link = sections[index]
+    link = sections[0] unless link
+    link
+  end
+
   def update_sections
     update_most_popular_and_newest
     update_croatia
@@ -31,13 +38,49 @@ module TelegramHelpers
     puts "[#{Time.now}] Sending '#{subject}' to #{message_from.first_name} #{message_from.last_name} (#{message_from.username})"
   end
 
+  def update_page(bot, message, section_label, index)
+    link = get_link(section_label, index)
+    if message.message.entities.first.url != link
+      bot.api.edit_message_text(
+        chat_id: message.message.chat.id,
+        message_id: message.message.message_id,
+        text: "[#{set_subtitle(section_label, index)}](#{link})",
+        parse_mode: 'Markdown',
+        reply_markup: next_previous_markup(section_label, index))
+    end
+  end
+
+  def next_previous_markup(section_label, index)
+    keyboard = [[]]
+    keyboard[0] << Telegram::Bot::Types::InlineKeyboardButton.new(
+      text: '« Previous |',
+      callback_data: "#{section_label}.#{index - 1}") if index > 0
+    keyboard[0] << Telegram::Bot::Types::InlineKeyboardButton.new(
+      text: '| Next »',
+      callback_data: "#{section_label}.#{index + 1}") if Section.get(section_label)[index + 1]
+
+    Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: keyboard)
+  end
+
+  def send_first_section_article(bot, message, section_label)
+    link = get_link(section_label, 0)
+    bot.api.send_message(chat_id: message.chat.id,
+                         text: "[#{set_subtitle(section_label, 0)}](#{link})",
+                         parse_mode: 'Markdown',
+                         reply_markup: next_previous_markup(section_label, 0))
+  end
+
+  def set_subtitle(section_label, index)
+    "#{section_label} (#{index + 1}/#{Section.get(section_label).size})"
+  end
+
   private
 
   def update_most_popular_and_newest
     Concurrent::Promise.fulfill(Nokogiri::HTML(open('http://www.net.hr'))).then {|page|
       puts "[#{Time.now}] Fetched #{page.title}"
-      most_popular = page.css('div.tab_1 a').map {|link| get_telegram_link(link.values[0], @rhash)}
-      newest = page.css('div.tab_2 a').map {|link| get_telegram_link(link.values[0], @rhash)}
+      most_popular = page.css('div.tab_1 a').map {|link| get_telegram_link(link.values[0], RHASH)}
+      newest = page.css('div.tab_2 a').map {|link| get_telegram_link(link.values[0], RHASH)}
       Section.set(:most_popular, most_popular)
       Section.set(:newest, newest)
     }.execute
@@ -47,7 +90,7 @@ module TelegramHelpers
     Concurrent::Promise.fulfill(Nokogiri::HTML(open('http://net.hr/kategorija/danas/hrvatska/'))).then {|page|
       puts "[#{Time.now}] Fetched #{page.title}"
       croatia = page.css('section.feed.cf article.article-feed').map {|article|
-        get_telegram_link(article.css('div.article-text a')[0].values[0], @rhash)
+        get_telegram_link(article.css('div.article-text a')[0].values[0], RHASH)
       }
       Section.set(:croatia, croatia)
     }.execute
@@ -57,7 +100,7 @@ module TelegramHelpers
     Concurrent::Promise.fulfill(Nokogiri::HTML(open('http://net.hr/kategorija/danas/svijet/'))).then {|page|
       puts "[#{Time.now}] Fetched #{page.title}"
       world = page.css('section.feed.cf article.article-feed').map {|article|
-        get_telegram_link(article.css('div.article-text a')[0].values[0], @rhash)
+        get_telegram_link(article.css('div.article-text a')[0].values[0], RHASH)
       }
       Section.set(:world, world)
     }.execute
