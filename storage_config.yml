@@ -1,0 +1,26 @@
+sites:
+  - name: 'Net hr'
+    sku: 'net_hr'
+    rhash: '6919fd5eeb20f4'
+    refresh_rate: 300
+    categories:
+      - name: 'Most Popular'
+        sku: 'most_popular'
+        url: 'http://www.net.hr'
+        xpath_links:
+          - "//div[contains(@class, 'tab_1')]//a"
+      - name: 'Most Recent'
+        sku: 'most_recent'
+        url: 'http://www.net.hr'
+        xpath_links:
+          - "//div[contains(@class, 'tab_2')]//a"
+      - name: 'Croatia'
+        sku: 'croatia'
+        url: 'http://net.hr/kategorija/danas/hrvatska/'
+        xpath_links:
+          - "//div[contains(@class, 'article-text')]/a"
+      - name: 'World'
+        sku: 'world'
+        url: 'http://net.hr/kategorija/danas/svijet/'
+        xpath_links:
+          - "//div[contains(@class, 'article-text')]/a"
