@@ -10,6 +10,8 @@ class TgNewsBot
 
   Storage.init
 
+  sleep(10)
+
   Telegram::Bot::Client.run(ENV['TELEGRAM_BOT_TOKEN']) do |bot|
     bot.listen do |message|
 
