@@ -55,8 +55,8 @@ module Storage
 
     def get_link(site_sku, category_sku, index)
       sections = get_articles(site_sku, category_sku)
-      link = sections[index]
-      link = sections[0] unless link
+      link = sections&.[](index)
+      link = sections&.[](0) unless link
       link
     end
 
@@ -89,12 +89,13 @@ module Storage
     end
 
     def fill_toc
+      @toc_text << "*Table of Contents*\n"
       @config['sites'].each_with_index do |site, site_index|
-        @toc_text << "#{site['name']}:\n"
+        @toc_text << "*#{site['name']}*:\n"
 
         site['categories'].each_with_index do |category, category_index|
           key = "#{site_index + 1}.#{category_index + 1}"
-          @toc_text << "  #{key} #{category['name']}\n"
+          @toc_text << "  `#{key}` _#{category['name']}_\n"
           @toc_map[key] = [site['sku'], category['sku']]
         end
       end
@@ -102,11 +103,13 @@ module Storage
 
     def update_page(bot, message, site_sku, category_sku, index)
       link = get_link(site_sku, category_sku, index)
-      if message.message.entities.first.url != link
+      if message.message.entities.first&.url != link
+        text = generate_header(site_sku, category_sku, index)
+
         bot.api.edit_message_text(
           chat_id: message.message.chat.id,
           message_id: message.message.message_id,
-          text: "[Subtitle](#{link})",
+          text: "[#{text}](#{link})",
           parse_mode: 'Markdown',
           reply_markup: next_previous_markup(site_sku, category_sku, index))
       end
@@ -128,11 +131,20 @@ module Storage
     end
 
     def send_first_section_article(bot, message, site_sku, category_sku)
+      text = generate_header(site_sku, category_sku, 0)
       link = get_link(site_sku, category_sku, 0)
       bot.api.send_message(chat_id: message.chat.id,
-                           text: "[Subtitle](#{link})",
+                           text: "[#{text}](#{link})",
                            parse_mode: 'Markdown',
                            reply_markup: next_previous_markup(site_sku, category_sku, 0))
+    end
+
+    def generate_header(site_sku, category_sku, index)
+      site_name = site_sku_to_name(site_sku)
+      category_name = category_sku_to_name(site_sku, category_sku)
+      category_size = Storage.articles[site_sku][category_sku].size
+
+      "#{site_name}: #{category_name} (#{index + 1}/#{category_size})"
     end
 
   end

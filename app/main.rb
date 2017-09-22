@@ -5,16 +5,6 @@ require_relative 'utils/storage'
 
 STDOUT.sync = true
 
-# Telegram Bot commands:
-#
-# popular - Most Popular
-# new - Most Recent
-# croatia - Croatia
-# world - World
-
-# TOKEN = '395558391:AAGAyg3EUoPYsl41TmhsKaBcEX7sY5RlRsc' # Net.hr Matth Bot
-# TOKEN = '435224023:AAGU8pcQMqb-zRsIbzLl3inSEq8RpRl0ZFk' # Net.hr Test Bot
-
 class TgNewsBot
   extend TelegramHelpers
 
@@ -37,9 +27,19 @@ class TgNewsBot
       when Telegram::Bot::Types::Message
         case message.text
         when '/start', '/sites'
-          welcome = "Welcome to News Feed bot made by @mpevec \n\n"
-          welcome << "#{Storage.toc_text}"
-          bot.api.send_message(chat_id: message.chat.id, text: welcome)
+          welcome =<<-EOS
+Welcome to News bot created by @mpevec
+
+To start reading, enter the number in front of the category you want to read.
+For example, `1.2`
+
+Enjoy!
+          EOS
+
+          welcome << "\n\n#{Storage.toc_text}"
+          bot.api.send_message(chat_id: message.chat.id,
+                               text: welcome,
+                               parse_mode: 'Markdown')
 
         when /^[0-9]+\.[0-9]+$/
           result = Storage.toc_map[message.text]
@@ -48,10 +48,14 @@ class TgNewsBot
             site_sku, category_sku = result
             Storage.send_first_section_article(bot, message, site_sku, category_sku)
           else
-            bot.api.send_message(chat_id: message.chat.id, text: "Category does not exist in ToC.\n\n #{Storage.toc_text}")
+            bot.api.send_message(chat_id: message.chat.id,
+                                 text: "Category does not exist in ToC.\n\n #{Storage.toc_text}",
+                                 parse_mode: 'Markdown')
           end
         else
-          bot.api.send_message(chat_id: message.chat.id, text: "Unknown command.\n\n #{Storage.toc_text}")
+          bot.api.send_message(chat_id: message.chat.id,
+                               text: "Unknown command.\n\n #{Storage.toc_text}",
+                               parse_mode: 'Markdown')
         end
       else
         # nothing
