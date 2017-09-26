@@ -18,6 +18,31 @@ sites:
         url: 'https://techcrunch.com/topic/subject/internet-of-things/'
         xpath_links:
           - "//a[@data-omni-sm='gbl_river_headline,']"
+  - name: 'The Hacker News'
+    sku: 'the_hacker_news'
+    refresh_rate: 330
+    categories:
+      - name: 'Popular Stories'
+        sku: 'popular_stories'
+        url: 'http://thehackernews.com/'
+        xpath_links:
+          - "//div[@class='widget-content popular-posts']//a"
+      - name: 'Tech'
+        sku: 'tech'
+        url: 'http://thehackernews.com/search/label/Technology%20News'
+        xpath_links:
+          - "//article[@class='post item module']//h2/a"
+      - name: 'Hacking'
+        sku: 'hacking'
+        url: 'http://thehackernews.com/search/label/hacking%20news'
+        xpath_links:
+          - "//article[@class='post item module']//h2/a"
+      - name: 'Spying'
+        sku: 'spying'
+        url: 'http://thehackernews.com/search/label/spying'
+        xpath_links:
+          - "//article[@class='post item module']//h2/a"
+
   - name: 'Net hr'
     sku: 'net_hr'
     rhash: '6919fd5eeb20f4'
