@@ -22,11 +22,16 @@ sites:
     sku: 'the_hacker_news'
     refresh_rate: 330
     categories:
+      - name: 'Home'
+        sku: 'home'
+        url: 'http://thehackernews.com/search?max-results=30'
+        xpath_links:
+          - "//article[@class='post item module']//h2/a"
       - name: 'Popular Stories'
         sku: 'popular_stories'
         url: 'http://thehackernews.com/'
         xpath_links:
-          - "//div[@class='widget-content popular-posts']//a"
+          - "//div[@class='widget-content popular-posts']//div[@class='item-title']/a"
       - name: 'Tech'
         sku: 'tech'
         url: 'http://thehackernews.com/search/label/Technology%20News'
