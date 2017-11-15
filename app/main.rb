@@ -1,5 +1,6 @@
 require 'telegram/bot'
 require 'dotenv/load'
+require_relative 'utils/event_tracker'
 require_relative 'utils/telegram_helpers'
 require_relative 'utils/storage'
 
@@ -24,13 +25,14 @@ class TgNewsBot
           begin
             Storage.update_page(bot, message, site_sku, category_sku, index.to_i)
             bot.api.answer_callback_query(callback_query_id: message.id)
+            TrackEvent.article_change(message, site_sku, category_sku, index)
           rescue Telegram::Bot::Exceptions::ResponseError
             # occurs when user clicks inline buttons too fast
           end
-
         when Telegram::Bot::Types::Message
           case message.text
           when '/start', '/sites'
+            TrackEvent.start(message)
             welcome =<<-EOS
 Welcome to News bot created by @mpevec
 
@@ -51,21 +53,24 @@ Enjoy!
             if result.present?
               site_sku, category_sku = result
               Storage.send_first_section_article(bot, message, site_sku, category_sku)
+              TrackEvent.category_picked(message, site_sku, category_sku)
             else
               bot.api.send_message(chat_id: message.chat.id,
                                    text: "Category does not exist in ToC.\n\n #{Storage.toc_text}",
                                    parse_mode: 'Markdown')
+              TrackEvent.category_missed(message)
             end
           else
             bot.api.send_message(chat_id: message.chat.id,
                                  text: "Unknown command.\n\n #{Storage.toc_text}",
                                  parse_mode: 'Markdown')
+            TrackEvent.unknown_command(message)
           end
         else
           # nothing
         end
       end
-    rescue Telegram::Bot::Exceptions::ResponseError
+    rescue Exception
       retry
     end
   end
