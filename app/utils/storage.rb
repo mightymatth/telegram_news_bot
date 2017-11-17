@@ -11,9 +11,10 @@ module Storage
   @articles = Concurrent::Hash.new
   @toc_text = ''
   @toc_map = {}
+  @articles_for_inline = []
 
   class << self
-    attr_reader :articles, :config, :toc_text, :toc_map
+    attr_reader :articles, :config, :toc_text, :toc_map, :articles_for_inline
 
     def set_articles(site_sku, section_sku, articles)
       @articles[site_sku] = {} unless @articles[site_sku]
@@ -103,15 +104,23 @@ module Storage
 
     def update_page(bot, message, site_sku, category_sku, index)
       link = get_link(site_sku, category_sku, index)
-      if message.message.entities.first&.url != link
+      if message.message&.entities&.first&.url != link
         text = generate_header(site_sku, category_sku, index)
 
-        bot.api.edit_message_text(
-          chat_id: message.message.chat.id,
-          message_id: message.message.message_id,
+        edit_message_params = {
           text: "[#{text}](#{link})",
           parse_mode: 'Markdown',
-          reply_markup: next_previous_markup(site_sku, category_sku, index))
+          reply_markup: next_previous_markup(site_sku, category_sku, index)
+        }
+
+        if message.message.present?
+          edit_message_params[:chat_id] = message.message&.chat.id
+          edit_message_params[:message_id] = message.message&.message_id
+        else
+          edit_message_params[:inline_message_id] = message.inline_message_id
+        end
+
+        bot.api.edit_message_text(edit_message_params)
       end
     end
 
@@ -130,13 +139,20 @@ module Storage
       Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: keyboard)
     end
 
-    def send_first_section_article(bot, message, site_sku, category_sku)
+    def get_first_section_article_info(site_sku, category_sku)
       text = generate_header(site_sku, category_sku, 0)
       link = get_link(site_sku, category_sku, 0)
+      reply_markup = next_previous_markup(site_sku, category_sku, 0)
+
+      [text, link, reply_markup]
+    end
+
+    def send_first_section_article(bot, message, site_sku, category_sku)
+      text, link, reply_markup = get_first_section_article_info(site_sku, category_sku)
       bot.api.send_message(chat_id: message.chat.id,
                            text: "[#{text}](#{link})",
                            parse_mode: 'Markdown',
-                           reply_markup: next_previous_markup(site_sku, category_sku, 0))
+                           reply_markup: reply_markup)
     end
 
     def generate_header(site_sku, category_sku, index)
@@ -145,6 +161,30 @@ module Storage
       category_size = Storage.articles[site_sku][category_sku].size
 
       "#{site_name}: #{category_name} (#{index + 1}/#{category_size})"
+    end
+
+    def fill_data_for_inline_queries
+      index = 1
+      @config['sites'].each do |site|
+        site['categories'].each do |category|
+          site_name = site_sku_to_name(site['sku'])
+          category_name = category_sku_to_name(site['sku'], category['sku'])
+
+          text, link, reply_markup = get_first_section_article_info(site['sku'], category['sku'])
+
+          @articles_for_inline << Telegram::Bot::Types::InlineQueryResultArticle.new(
+            id: index,
+            title: "#{site_name} #{category_name}",
+            thumb_url: site['logo_url'],
+            input_message_content: Telegram::Bot::Types::InputTextMessageContent.new(
+              message_text: "[#{text}](#{link})",
+              parse_mode: 'Markdown'
+            ),
+            reply_markup: reply_markup
+          )
+          index += 1
+        end
+      end
     end
 
   end

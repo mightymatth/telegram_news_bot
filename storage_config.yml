@@ -1,6 +1,7 @@
 sites:
   - name: 'TechCrunch'
     sku: 'techcrunch'
+    logo_url: 'http://bocacommunications.com/wp-content/uploads/2017/07/TechCrunch-Logo.jpg'
     refresh_rate: 300
     categories:
       - name: 'Popular'
@@ -20,6 +21,7 @@ sites:
           - "//a[@data-omni-sm='gbl_river_headline,']"
   - name: 'The Hacker News'
     sku: 'the_hacker_news'
+    logo_url: 'http://is2.mzstatic.com/image/thumb/Purple7/v4/0e/47/bd/0e47bd29-ec98-bf70-d363-e1c78d40893f/source/1200x630bb.jpg'
     refresh_rate: 330
     categories:
       - name: 'Home'
@@ -50,6 +52,7 @@ sites:
 
   - name: 'Net hr'
     sku: 'net_hr'
+    logo_url: 'https://botw-pd.s3.amazonaws.com/styles/logo-original-577x577/s3/092014/net.hr_.png?itok=hu7COdfE'
     rhash: '6919fd5eeb20f4'
     refresh_rate: 360
     categories:

@@ -10,8 +10,9 @@ class TgNewsBot
   extend TelegramHelpers
 
   Storage.init
-
   sleep(10)
+
+  Storage.fill_data_for_inline_queries
 
   Telegram::Bot::Client.run(ENV['TELEGRAM_BOT_TOKEN']) do |bot|
 
@@ -19,6 +20,10 @@ class TgNewsBot
       bot.listen do |message|
 
         case message
+        when Telegram::Bot::Types::InlineQuery
+          query = message.query.downcase
+          results = Storage.articles_for_inline.select { |article| article.title.downcase.include?(query) }
+          bot.api.answer_inline_query(inline_query_id: message.id, results: results)
         when Telegram::Bot::Types::CallbackQuery
           site_sku, category_sku, index = message.data.split('.')
 
@@ -33,18 +38,11 @@ class TgNewsBot
           case message.text
           when '/start', '/sites'
             TrackEvent.start(message)
-            welcome =<<-EOS
-Welcome to News bot created by @mpevec
+            @welcome ||= IO.read('app/assets/files/welcome.md')
 
-To start reading, enter the number in front of the category you want to read.
-For example, `1.2`
-
-Enjoy!
-            EOS
-
-            welcome << "\n\n#{Storage.toc_text}"
+            @welcome << "\n\n#{Storage.toc_text}"
             bot.api.send_message(chat_id: message.chat.id,
-                                 text: welcome,
+                                 text: @welcome,
                                  parse_mode: 'Markdown')
 
           when /^[0-9]+\.[0-9]+$/
