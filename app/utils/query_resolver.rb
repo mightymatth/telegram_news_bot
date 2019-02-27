@@ -16,7 +16,10 @@ module QueryResolver
         cache_key, index = message.data.split('#')
 
         begin
+
+          p 'in callback query'
           update_message(message, cache_key, index.to_i)
+          p 'after update message'
           api_client.answer_callback_query(callback_query_id: message.id)
           TrackEvent.article_change(message, cache_key, index.to_i)
         rescue Telegram::Bot::Exceptions::ResponseError
@@ -26,7 +29,7 @@ module QueryResolver
         case message.text
         when '/start',
           TrackEvent.start(message)
-          @welcome ||= IO.read('app/assets/files/welcome.md')
+          @welcome ||= IO.read(File.join(File.dirname(__FILE__), "../assets/files/welcome.md"))
           send_markdown_text(message.chat, @welcome)
         when /\A([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}\Z/ # domain
           urls = Cache.get(message.text)
@@ -43,6 +46,7 @@ module QueryResolver
         end
       else
         # nothing
+        p 'Did not catch message type', message
       end
     end
   end

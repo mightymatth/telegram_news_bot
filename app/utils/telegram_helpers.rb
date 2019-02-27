@@ -86,4 +86,18 @@ module TelegramHelpers
   def generate_header(cache_key, index)
     "Results for '#{cache_key}' (#{index + 1}/#{Cache.get_size(cache_key)})"
   end
+
+  class << self
+    def extract_message(telegram_data)
+      update = Telegram::Bot::Types::Update.new(telegram_data)
+      types = %w(inline_query
+                     chosen_inline_result
+                     callback_query
+                     edited_message
+                     message
+                     channel_post
+                     edited_channel_post)
+      types.inject(nil) { |acc, elem| acc || update.public_send(elem) }
+    end
+  end
 end

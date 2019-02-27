@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Telegram News Bot
+
+Globals:
+  Function:
+    Timeout: 3
+Resources:
+  TelegramNewsBotHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: app/
+      Handler: lambda.handler
+      Runtime: ruby2.5
+      Events:
+        Webhook:
+          Type: Api
+          Properties:
+            Path: /TelegramNewsBotWebhook
+            Method: post
+
+Outputs:
+  WebhookApi:
+    Description: "API Gateway endpoint URL for Prod stage for TelegramNewsBotHandler function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/TelegramNewsBotWebhook/"
+
+  TelegramNewsBotHandler:
+    Description: "TelegramNewsBotHandler ARN"
+    Value: !GetAtt TelegramNewsBotHandler.Arn
+
+  TelegramNewsBotHandlerIamRole:
+    Description: "Implicit IAM Role created for TelegramNewsBotHandler"
+    Value: !GetAtt TelegramNewsBotHandlerRole.Arn
