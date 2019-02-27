@@ -25,6 +25,7 @@ GEM
     minitest (5.10.3)
     mixpanel-ruby (2.2.0)
     multipart-post (2.0.0)
+    news-api (0.0.0)
     nokogiri (1.8.0)
       mini_portile2 (~> 2.2.0)
     telegram-bot-ruby (0.8.3)
@@ -47,8 +48,9 @@ DEPENDENCIES
   concurrent-ruby (= 1.0.5)
   dotenv (= 2.2.1)
   mixpanel-ruby (= 2.2.0)
+  news-api (= 0.0.0)
   nokogiri (= 1.8.0)
   telegram-bot-ruby (= 0.8.3)
 
 BUNDLED WITH
-   1.15.4
+   1.16.6

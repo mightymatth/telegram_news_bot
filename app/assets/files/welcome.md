@@ -1,6 +1,8 @@
 Welcome to News bot created by @mpevec
 
-To start reading, enter the number in front of the category you want to read.
-For example, `1.2`
+To start reading, enter domain of your target website 
+(e.g. bbc.co.uk, techcrunch.com, engadget.com)
 
 Enjoy!
+
+Powered by [NewsAPI.org](https://newsapi.org)
