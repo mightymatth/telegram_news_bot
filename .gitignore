@@ -5,3 +5,4 @@
 vendor
 app/.bundle
 app/vendor
+packaged.yaml

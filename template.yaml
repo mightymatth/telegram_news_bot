@@ -17,13 +17,13 @@ Resources:
         Webhook:
           Type: Api
           Properties:
-            Path: /TelegramNewsBotWebhook
+            Path: /webhook
             Method: post
 
 Outputs:
   WebhookApi:
     Description: "API Gateway endpoint URL for Prod stage for TelegramNewsBotHandler function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/TelegramNewsBotWebhook/"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/webhook/"
 
   TelegramNewsBotHandler:
     Description: "TelegramNewsBotHandler ARN"
