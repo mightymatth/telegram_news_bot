@@ -25,9 +25,7 @@ module TrackEvent
     end
 
     def article_change(message, cache_key, index)
-      data = {
-        article_url: Cache.get_link(cache_key, index)
-      }
+      data = { article_url: Cache.get_link(cache_key, index) }
       @mixpanel.track(message.from.id, 'article_change', base(message).merge(data))
     end
 

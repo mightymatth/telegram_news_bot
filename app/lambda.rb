@@ -1,6 +1,5 @@
-require 'telegram/bot'
-require_relative 'utils/query_resolver'
 require_relative 'utils/telegram_helpers'
+require_relative 'utils/query_resolver'
 require 'json'
 
 def handler(event:, context:)

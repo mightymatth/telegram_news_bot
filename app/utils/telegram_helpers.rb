@@ -1,9 +1,6 @@
-require 'nokogiri'
 require 'open-uri'
-require 'concurrent'
-require 'yaml'
-require 'active_support/all'
 require 'telegram/bot'
+require 'active_support/all'
 require_relative 'cache'
 
 module TelegramHelpers

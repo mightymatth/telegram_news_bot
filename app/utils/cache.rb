@@ -1,10 +1,7 @@
-require 'yaml'
-require 'concurrent'
-require 'nokogiri'
 require_relative 'newsapi'
 
 module Cache
-  @map = Concurrent::Hash.new
+  @map = {}
 
   class << self
     def get(cache_key)

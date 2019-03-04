@@ -3,7 +3,7 @@ require 'news-api'
 module NewsApi
   class << self
     def client
-      @news_api_client = News.new(ENV['NEWS_API_KEY'])
+      @news_api_client ||= News.new(ENV['NEWS_API_KEY'])
     end
 
     def news_for_domain(domain)

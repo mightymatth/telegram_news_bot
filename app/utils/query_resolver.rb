@@ -1,5 +1,4 @@
 require 'telegram/bot'
-require 'dotenv/load'
 require_relative 'event_tracker'
 require_relative 'telegram_helpers'
 
@@ -16,10 +15,7 @@ module QueryResolver
         cache_key, index = message.data.split('#')
 
         begin
-
-          p 'in callback query'
           update_message(message, cache_key, index.to_i)
-          p 'after update message'
           api_client.answer_callback_query(callback_query_id: message.id)
           TrackEvent.article_change(message, cache_key, index.to_i)
         rescue Telegram::Bot::Exceptions::ResponseError
@@ -46,7 +42,6 @@ module QueryResolver
         end
       else
         # nothing
-        p 'Did not catch message type', message
       end
     end
   end

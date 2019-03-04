@@ -6,3 +6,4 @@ vendor
 app/.bundle
 app/vendor
 packaged.yaml
+.DS_STORE
