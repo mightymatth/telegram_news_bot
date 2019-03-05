@@ -1,6 +1,6 @@
 require 'dotenv/load'
 require 'telegram/bot'
-require_relative 'utils/query_resolver'
+require_relative 'app/utils/query_resolver'
 
 class TgNewsBot
   Telegram::Bot::Client.run(ENV['TELEGRAM_BOT_TOKEN']) do |bot|

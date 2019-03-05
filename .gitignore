@@ -7,3 +7,5 @@ app/.bundle
 app/vendor
 packaged.yaml
 .DS_STORE
+dependencies
+template.yaml
