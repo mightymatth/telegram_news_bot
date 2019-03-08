@@ -12,15 +12,18 @@ Resources:
     Properties:
       CodeUri: app/
       Handler: lambda.handler
-      Environment:
-        Variables:
-          TELEGRAM_BOT_TOKEN: 227334812:ASG_5VidUK-SRzqGSiMK3nYHLJbUOdrL7dU
-          NEWS_API_KEY: d6d0afc1f776411c8483d6612cd9d2d8
-          MIXPANEL_TOKEN: 2ad51e8e0a98d2f0dfabac94abe128c0
-          CACHE_DURATION_SECS: 360
       Layers:
         - !Ref TelegramNewsBotLayer
       Runtime: ruby2.5
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Sid: SSMParameterReadByPathPolicy
+              Effect: Allow
+              Action:
+                - 'ssm:GetParametersByPath'
+              Resource:
+                !Sub 'arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/telegramNewsBot/*'
       Events:
         Webhook:
           Type: Api
@@ -34,7 +37,7 @@ Resources:
       Description: Bundled gems
       ContentUri: dependencies/
       CompatibleRuntimes:
-        - ruby2.5
+      - ruby2.5
       LicenseInfo: 'MIT'
       RetentionPolicy: Retain
 
