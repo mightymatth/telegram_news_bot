@@ -63,6 +63,25 @@ module TelegramHelpers
     Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: keyboard)
   end
 
+  def examples_markup
+    keyboard = [
+      [Telegram::Bot::Types::InlineKeyboardButton.new(
+        text: 'medium.com',
+        callback_data: 'medium.com#0'),
+       Telegram::Bot::Types::InlineKeyboardButton.new(
+         text: 'techcrunch.com',
+         callback_data: 'techcrunch.com#0')],
+      [Telegram::Bot::Types::InlineKeyboardButton.new(
+        text: 'bbc.co.uk',
+        callback_data: 'bbc.co.uk#0'),
+       Telegram::Bot::Types::InlineKeyboardButton.new(
+         text: 'espn.com',
+         callback_data: 'espn.com#0')],
+    ]
+
+    Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: keyboard)
+  end
+
   def get_first_section_article_info(cache_key)
     text = generate_header(cache_key, 0)
     link = Cache.get_link(cache_key, 0)

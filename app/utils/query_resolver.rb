@@ -27,6 +27,11 @@ module QueryResolver
           TrackEvent.start(message)
           @welcome ||= IO.read(File.join(File.dirname(__FILE__), "../assets/files/welcome.md"))
           send_markdown_text(message.chat, @welcome)
+
+          api_client.send_message(chat_id: message.chat.id,
+                                  text: @welcome,
+                                  parse_mode: 'Markdown',
+                                  reply_markup: examples_markup)
         when /\A([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}\Z/ # domain
           urls = Cache.get(message.text)
 
@@ -37,7 +42,10 @@ module QueryResolver
                                "There are no available articles for this domain.\n\n")
           end
         else
-          send_markdown_text(message.chat, "Wrong domain.\n\n")
+          api_client.send_message(chat_id: message.chat.id,
+                                  text: 'Wrong domain. Try some of these...',
+                                  parse_mode: 'Markdown',
+                                  reply_markup: examples_markup)
           TrackEvent.unknown_command(message)
         end
       else

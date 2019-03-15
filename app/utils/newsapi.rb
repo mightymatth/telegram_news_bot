@@ -8,7 +8,7 @@ module NewsApi
 
     def news_for_domain(domain)
       client
-        .get_everything(domains: domain, pageSize: 100)
+        .get_everything(domains: domain, pageSize: 100, sortBy: 'popularity')
         .map { |result| result.url}
     end
   end
