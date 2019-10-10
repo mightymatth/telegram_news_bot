@@ -87,7 +87,6 @@ module TelegramHelpers
     link = Cache.get_link(cache_key, 0)
     reply_markup = next_previous_markup(cache_key, 0)
 
-
     [text, link, reply_markup]
   end
 

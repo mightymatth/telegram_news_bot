@@ -2,18 +2,46 @@
 
 ### Deploy application to AWS
 
-* set credentials ang region via `aws cli` ([guide](https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html))
-* in deployment script (`deploy.sh`), change `--s3-bucket` option of `sam package` to point to your own bucket
-* from `template.example.yaml` create `template.yaml` and configure `Resources>TelegramNewsBotHandler>Properties>Environment>Variables` list with correct values 
+* install `aws cli` and `sam` cli,
+* set credentials and region via `aws cli` ([guide](https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html)),
+* create `.env` file from `.env.example` file and modify it for your needs.
+
+#### Import parameters
+
+Run task for importing parameters from `.env` file to SSM Parameter Store.
+
+`rake reimport_params NAMESPACE=<stack-name>`
+
+* NAMESPACE - string that matches stack name provided in deploy script ($AWS_STACK_NAME, see below).
+
+#### Deployment
+
 * run deployment script:
 ```
-./deploy.sh
+AWS_STACK_NAME=<stack-name> S3_BUCKET_NAME=<bucket-name> ./deploy.sh
 ```
 
-### Attach Telegram Webhook
+* AWS_STACK_NAME - string (kebab-case); value that matches namespace from SSM Parameter Store,
+* S3_BUCKET_NAME - string (kebab-case); previously created S3 bucket name that will hold artifacts.
+
+#### Attach Telegram Webhook
+
+After deployment, you will get `WEBHOOK_URL`. Go to Telegram, message [**BotFather**](https://t.me/BotFather) to get `TELEGRAM_BOT_TOKEN`. Change the URL provided below to fit the parameters and paste it in your browser.
+
 ```
 GET https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/setWebhook?url=<WEBHOOK_URL>
 ```
+
+
+### Serverless setup locally
+
+* install ngrok (`npm install -g ngrok`), create an account and login
+* create ngrok tunnel to port 3000
+    * `ngrok http 3000`
+    * copy tunnel link (e.g. `https://b26b43ce.ngrok.io`) as it will be your `WEBHOOK_URL`
+* attach Telegram webhook to your bot as described above
+* run script to try serverless setup locally `./test_local.sh`
+
 
 ### Local development
 

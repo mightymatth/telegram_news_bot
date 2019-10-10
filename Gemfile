@@ -7,5 +7,5 @@ gem 'news-api', '0.0.0'
 gem 'aws-sdk-ssm'
 
 group :development do
-  gem 'dotenv', '2.2.1'
+  gem 'dotenv', '2.7.0'
 end
