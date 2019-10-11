@@ -1,6 +1,6 @@
-require_relative 'utils/ssm_parameter_store'
-require_relative 'utils/telegram_helpers'
-require_relative 'utils/query_resolver'
+require_relative 'services/ssm_parameter_store'
+require_relative 'services/telegram_helpers'
+require_relative 'services/query_resolver'
 require 'json'
 
 SSMParameterStore.import_env_variables
