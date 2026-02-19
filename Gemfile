@@ -1,11 +1,16 @@
 source 'https://rubygems.org'
 
-gem 'telegram-bot-ruby', '0.8.3'
-gem 'activesupport', '5.2.4.3'
-gem 'mixpanel-ruby', '2.2.0'
-gem 'news-api', '0.0.0'
-gem 'aws-sdk-ssm'
+gem 'telegram-bot-ruby', '~> 2.0'
+gem 'activesupport', '~> 7.2'
+gem 'mixpanel-ruby', '~> 2.3'
+gem 'news-api', '~> 0.2'
+gem 'aws-sdk-ssm', '~> 1.170'
 
-group :development do
-  gem 'dotenv', '2.7.0'
+group :development, :test do
+  gem 'dotenv', '~> 3.1'
+end
+
+group :test do
+  gem 'minitest', '~> 5.20'
+  gem 'webmock', '~> 3.19'
 end

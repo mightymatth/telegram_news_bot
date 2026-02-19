@@ -14,7 +14,7 @@ Resources:
       Handler: lambda.handler
       Layers:
         - !Ref TelegramNewsBotLayer
-      Runtime: ruby2.5
+      Runtime: ruby3.3
       Environment:
         Variables:
           AWS_STACK_NAME: !Sub '${AWS::StackName}'
@@ -40,7 +40,7 @@ Resources:
       Description: Bundled gems
       ContentUri: dependencies/
       CompatibleRuntimes:
-      - ruby2.5
+      - ruby3.3
       LicenseInfo: 'MIT'
       RetentionPolicy: Retain
 
