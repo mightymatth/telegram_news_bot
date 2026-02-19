@@ -6,6 +6,11 @@ gem 'mixpanel-ruby', '~> 2.3'
 gem 'news-api', '~> 0.2'
 gem 'aws-sdk-ssm', '~> 1.170'
 
-group :development do
+group :development, :test do
   gem 'dotenv', '~> 3.1'
+end
+
+group :test do
+  gem 'minitest', '~> 5.20'
+  gem 'webmock', '~> 3.19'
 end
